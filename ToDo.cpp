@@ -16,6 +16,8 @@ void cargarTareasPendientes(Tarea *TP, int n);
 void realizarTareas(Tarea *TP, Tarea *TR, int n);
 void mostrarTareasRealizadas(Tarea *TR, int n);
 void mostrarTareasPendientes(Tarea *TP, int n);
+void mostrarTarea(Tarea T);
+Tarea buscarTarea(Tarea *TP, Tarea *TR, int n, int id);
 
 //--------------------------------------------------------------------//
 //--------------------------------MAIN--------------------------------//
@@ -23,7 +25,7 @@ void mostrarTareasPendientes(Tarea *TP, int n);
 
 int main(){
 	srand(time(NULL));
-	int n, i;
+	int n, aux;
 	
 	printf("Ingrese la cantidad de tareas que desea cargar: "); scanf("%d",&n);
 	
@@ -54,6 +56,16 @@ int main(){
 	printf("--------------------------------------------------------------------\n");
 	mostrarTareasPendientes(TareasPendientes, n);
 	
+	printf("\n");
+	printf("--------------------------------------------------------------------\n");
+	printf("-------------------------BUSQUEDA DE TAREAS-------------------------\n");
+	printf("--------------------------------------------------------------------\n");
+	aux = 0;
+	while(aux<1 || aux>n){
+		printf("Ingrese el ID de la tarea que busca: "); fflush(stdin); scanf("%d",&aux);
+	}
+	Tarea busqueda = buscarTarea(TareasPendientes, TareasRealizadas, n, aux);
+	mostrarTarea(busqueda);
 	
 	free(TareasPendientes);
 	free(TareasRealizadas);
@@ -114,10 +126,7 @@ void mostrarTareasRealizadas(Tarea *TR, int n){
 	int i;
 	for(i = 0; i < n; i++){
 		if(TR->tareaID != -1){
-			printf("\nTarea %d: ", TR->tareaID);
-			printf("\nDescripcion: %s", TR->descripcion);
-			printf("\nDuracion: %d dias", TR->duracion);
-			printf("\n");
+			mostrarTarea(*TR);
 		}
 		TR++;
 	}
@@ -127,11 +136,24 @@ void mostrarTareasPendientes(Tarea *TP, int n){
 	int i;
 	for(i = 0; i < n; i++){
 		if(TP->tareaID != -1){
-			printf("\nTarea %d: ", TP->tareaID);
-			printf("\nDescripcion: %s", TP->descripcion);
-			printf("\nDuracion: %d dias", TP->duracion);
-			printf("\n");
+			mostrarTarea(*TP);
 		}
 		TP++;
+	}
+}
+
+void mostrarTarea(Tarea T){
+	printf("\nTarea %d: ", T.tareaID);
+	printf("\nDescripcion: %s", T.descripcion);
+	printf("\nDuracion: %d dias", T.duracion);
+	printf("\n");
+}
+
+Tarea buscarTarea(Tarea *TP, Tarea *TR, int n, int id){
+	int i;
+	for(i = 0; i < n; i++){
+		if(id == TP->tareaID) return *TP;
+		if(id == TR->tareaID) return *TR;
+		TP++; TR++;
 	}
 }
