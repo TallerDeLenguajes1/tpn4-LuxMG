@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include<time.h>
 
 typedef struct Tarea{
@@ -16,6 +17,8 @@ void cargarTareasPendientes(Tarea *TP, int n);
 void realizarTareas(Tarea *TP, Tarea *TR, int n);
 void mostrarTareasRealizadas(Tarea *TR, int n);
 void mostrarTareasPendientes(Tarea *TP, int n);
+void mostrarTarea(Tarea T);
+Tarea buscarTarea(Tarea *TP, Tarea *TR, int n, char clave[]);
 
 //--------------------------------------------------------------------//
 //--------------------------------MAIN--------------------------------//
@@ -53,6 +56,19 @@ int main(){
 	printf("-------------------------TAREAS PENDIENTES--------------------------\n");
 	printf("--------------------------------------------------------------------\n");
 	mostrarTareasPendientes(TareasPendientes, n);
+	
+	printf("\n");
+	printf("--------------------------------------------------------------------\n");
+	printf("-------------------------BUSQUEDA DE TAREAS-------------------------\n");
+	printf("--------------------------------------------------------------------\n");
+	char clave[15];
+	printf("\nIngrese una palabra clave: "); fflush(stdin); gets(clave);
+	Tarea busqueda = buscarTarea(TareasPendientes, TareasRealizadas, n, clave);
+	if(busqueda.tareaID == -1){
+		printf("\nNo se encontraron tareas con esa palabra clave");
+	}else{
+		mostrarTarea(busqueda);
+	}
 	
 	
 	free(TareasPendientes);
@@ -114,10 +130,7 @@ void mostrarTareasRealizadas(Tarea *TR, int n){
 	int i;
 	for(i = 0; i < n; i++){
 		if(TR->tareaID != -1){
-			printf("\nTarea %d: ", TR->tareaID);
-			printf("\nDescripcion: %s", TR->descripcion);
-			printf("\nDuracion: %d dias", TR->duracion);
-			printf("\n");
+			mostrarTarea(*TR);
 		}
 		TR++;
 	}
@@ -127,11 +140,47 @@ void mostrarTareasPendientes(Tarea *TP, int n){
 	int i;
 	for(i = 0; i < n; i++){
 		if(TP->tareaID != -1){
-			printf("\nTarea %d: ", TP->tareaID);
-			printf("\nDescripcion: %s", TP->descripcion);
-			printf("\nDuracion: %d dias", TP->duracion);
-			printf("\n");
+			mostrarTarea(*TP);
 		}
 		TP++;
 	}
+}
+
+void mostrarTarea(Tarea T){
+	printf("\nTarea %d: ", T.tareaID);
+	printf("\nDescripcion: %s", T.descripcion);
+	printf("\nDuracion: %d dias", T.duracion);
+	printf("\n");
+}
+
+Tarea buscarTarea(Tarea *TP, Tarea *TR, int n, char clave[]){
+	int i;
+	for(i = 0; i < n; i++){
+		
+		//el problema con esta funcion es que si la palabra clave esta contenida en otra
+		//de todas formas la da por encontrada y retorna la Tarea que la posea
+		
+		if(TP->tareaID != -1){
+			while(*(TP->descripcion) != '\0'){
+				if(strstr(TP->descripcion, clave)){
+		            return *TP;
+		    	}
+		    	(TP->descripcion)++;
+			}
+		}
+		
+		if(TR->tareaID != -1){
+			while(*(TR->descripcion) != '\0'){
+				if(strstr(TR->descripcion, clave)){
+		            return *TR;
+		    	}
+		    	(TR->descripcion)++;
+			}
+		}
+		
+		TP++; TR++;
+	}
+	Tarea noEnc;
+	noEnc.tareaID = -1;
+	return noEnc;
 }
