@@ -18,7 +18,8 @@ void realizarTareas(Tarea *TP, Tarea *TR, int n);
 void mostrarTareasRealizadas(Tarea *TR, int n);
 void mostrarTareasPendientes(Tarea *TP, int n);
 void mostrarTarea(Tarea T);
-Tarea buscarTarea(Tarea *TP, Tarea *TR, int n, char clave[]);
+Tarea busquedaPorPalabra(Tarea *TP, Tarea *TR, int n, char clave[]);
+Tarea busquedaPorID(Tarea *TP, Tarea *TR, int n, int id);
 
 //--------------------------------------------------------------------//
 //--------------------------------MAIN--------------------------------//
@@ -26,7 +27,8 @@ Tarea buscarTarea(Tarea *TP, Tarea *TR, int n, char clave[]);
 
 int main(){
 	srand(time(NULL));
-	int n, i;
+	int n, aux;
+	Tarea busqueda;
 	
 	printf("Ingrese la cantidad de tareas que desea cargar: "); scanf("%d",&n);
 	
@@ -60,16 +62,30 @@ int main(){
 	printf("\n");
 	printf("--------------------------------------------------------------------\n");
 	printf("-------------------------BUSQUEDA DE TAREAS-------------------------\n");
-	printf("--------------------------------------------------------------------\n");
+	printf("-----------------------------por clave------------------------------\n");
 	char clave[15];
 	printf("\nIngrese una palabra clave: "); fflush(stdin); gets(clave);
-	Tarea busqueda = buscarTarea(TareasPendientes, TareasRealizadas, n, clave);
+	busqueda = busquedaPorPalabra(TareasPendientes, TareasRealizadas, n, clave);
 	if(busqueda.tareaID == -1){
 		printf("\nNo se encontraron tareas con esa palabra clave");
 	}else{
 		mostrarTarea(busqueda);
 	}
 	
+	printf("\n");
+	printf("--------------------------------------------------------------------\n");
+	printf("-------------------------BUSQUEDA DE TAREAS-------------------------\n");
+	printf("-------------------------------por ID-------------------------------\n");
+	aux = 0;
+	while(aux<1 || aux>n){
+		printf("Ingrese el ID de la tarea que busca: "); fflush(stdin); scanf("%d",&aux);
+	}
+	busqueda = busquedaPorID(TareasPendientes, TareasRealizadas, n, aux);
+	if(busqueda.tareaID == -1){
+		printf("\nNo se encontraron tareas con ese ID");
+	}else{
+		mostrarTarea(busqueda);
+	}
 	
 	free(TareasPendientes);
 	free(TareasRealizadas);
@@ -153,7 +169,7 @@ void mostrarTarea(Tarea T){
 	printf("\n");
 }
 
-Tarea buscarTarea(Tarea *TP, Tarea *TR, int n, char clave[]){
+Tarea busquedaPorPalabra(Tarea *TP, Tarea *TR, int n, char clave[]){
 	int i;
 	for(i = 0; i < n; i++){
 		
@@ -178,6 +194,18 @@ Tarea buscarTarea(Tarea *TP, Tarea *TR, int n, char clave[]){
 			}
 		}
 		
+		TP++; TR++;
+	}
+	Tarea noEnc;
+	noEnc.tareaID = -1;
+	return noEnc;
+}
+
+Tarea busquedaPorID(Tarea *TP, Tarea *TR, int n, int id){
+	int i;
+	for(i = 0; i < n; i++){
+		if(id == TP->tareaID) return *TP;
+		if(id == TR->tareaID) return *TR;
 		TP++; TR++;
 	}
 	Tarea noEnc;
